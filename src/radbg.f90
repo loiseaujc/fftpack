@@ -1,13 +1,13 @@
 subroutine radbg(ido, ip, l1, idl1, cc, c1, c2, ch, ch2, wa)
-   use fftpack_kind
-   implicit none
-   real(rk) :: ai1, ai2, ar1, ar1h, ar2, ar2h, arg, c1, &
-               c2, cc, ch, ch2, dc2, dcp, ds2, dsp, &
-               wa
-   integer :: i, ic, idij, idl1, ido, idp2, ik, ip, ipp2, &
-              ipph, is, j, j2, jc, k, l, l1, lc, nbd
-   dimension ch(ido, l1, ip), cc(ido, ip, l1), c1(ido, l1, ip), &
-      c2(idl1, ip), ch2(idl1, ip), wa(*)
+   use fftpack_kind, only: rk
+   implicit none(type, external)
+   integer, intent(in) :: ido, ip, l1, idl1
+   real(rk), intent(in) :: cc(ido, ip, l1), wa(*)
+   real(rk), intent(inout) :: ch(ido, l1, ip), ch2(idl1, ip), c1(ido, l1, ip), c2(idl1, ip)
+   real(rk) :: ai1, ai2, ar1, ar1h, ar2, ar2h, arg, &
+               dc2, dcp, ds2, dsp
+   integer :: i, ic, idij, idp2, ik, ipp2, &
+              ipph, is, j, j2, jc, k, l, lc, nbd
    real(rk), parameter :: tpi = 2*acos(-1.0_rk) ! 2 * pi
    arg = tpi/real(ip, rk)
    dcp = cos(arg)

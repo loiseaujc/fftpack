@@ -1,11 +1,13 @@
 subroutine radb4(ido, l1, cc, ch, wa1, wa2, wa3)
-   use fftpack_kind
-   implicit none
-   real(rk) :: cc, ch, ci2, ci3, ci4, cr2, cr3, cr4, &
+   use fftpack_kind, only: rk
+   implicit none(type, external)
+   integer, intent(in) :: ido, l1
+   real(rk), intent(in) :: cc(ido, 4, l1), wa1(*), wa2(*), wa3(*)
+   real(rk), intent(inout) :: ch(ido, l1, 4)
+   real(rk) :: ci2, ci3, ci4, cr2, cr3, cr4, &
                ti1, ti2, ti3, ti4, tr1, tr2, tr3, &
-               tr4, wa1, wa2, wa3
-   integer :: i, ic, ido, idp2, k, l1
-   dimension cc(ido, 4, l1), ch(ido, l1, 4), wa1(*), wa2(*), wa3(*)
+               tr4
+   integer :: i, ic, idp2, k
    real(rk), parameter :: sqrt2 = sqrt(2.0_rk)
    do concurrent(k=1:l1)
       tr1 = cc(1, 1, k) - cc(ido, 4, k)
