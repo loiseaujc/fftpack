@@ -1,14 +1,15 @@
 subroutine radb5(ido, l1, cc, ch, wa1, wa2, wa3, wa4)
-   use fftpack_kind
-   implicit none
-   real(rk) :: cc, ch, ci2, ci3, ci4, ci5, cr2, cr3, &
+   use fftpack_kind, only: rk
+   implicit none(type, external)
+   integer, intent(in) :: ido, l1
+   real(rk), intent(in) :: cc(ido, 5, l1), wa1(*), wa2(*), wa3(*), wa4(*)
+   real(rk), intent(inout) :: ch(ido, l1, 5)
+   real(rk) :: ci2, ci3, ci4, ci5, cr2, cr3, &
                cr4, cr5, di2, di3, di4, di5, dr2, dr3, &
                dr4, dr5
    real(rk) :: ti2, ti3, ti4, ti5, tr2, tr3, &
-               tr4, tr5, wa1, wa2, wa3, wa4
-   integer :: i, ic, ido, idp2, k, l1
-   dimension cc(ido, 5, l1), ch(ido, l1, 5), wa1(*), wa2(*), wa3(*), &
-      wa4(*)
+               tr4, tr5
+   integer :: i, ic, idp2, k
    real(rk), parameter :: pi = acos(-1.0_rk)
    real(rk), parameter :: tr11 = cos(2.0_rk*pi/5.0_rk)
    real(rk), parameter :: ti11 = sin(2.0_rk*pi/5.0_rk)

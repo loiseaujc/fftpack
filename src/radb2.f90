@@ -1,9 +1,12 @@
 subroutine radb2(ido, l1, cc, ch, wa1)
-   use fftpack_kind
-   implicit none
-   real(rk) :: cc, ch, ti2, tr2, wa1
-   integer :: i, ic, ido, idp2, k, l1
-   dimension cc(ido, 2, l1), ch(ido, l1, 2), wa1(*)
+   use fftpack_kind, only: rk
+   implicit none(type, external)
+   integer, intent(in) :: ido, l1
+   real(rk), intent(in) :: wa1(*), cc(ido, 2, l1)
+   real(rk), intent(inout) :: ch(ido, l1, 2)
+
+   real(rk) :: ti2, tr2
+   integer :: i, ic, idp2, k
    do concurrent(k=1:l1)
       ch(1, k, 1) = cc(1, 1, k) + cc(ido, 2, k)
       ch(1, k, 2) = cc(1, 1, k) - cc(ido, 2, k)

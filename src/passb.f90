@@ -1,6 +1,6 @@
 subroutine passb(nac, ido, ip, l1, idl1, cc, c1, c2, ch, ch2, wa)
-   use fftpack_kind
-   implicit none
+   use fftpack_kind, only: rk
+   implicit none(type, external)
    real(rk) :: c1, c2, cc, ch, ch2, wa, wai, war
    integer :: i, idij, idj, idl, idl1, idlj, ido, idot, idp, &
               ik, inc, ip, ipp2, ipph, j, jc, k, l, l1, lc
