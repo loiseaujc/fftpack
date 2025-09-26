@@ -1,105 +1,125 @@
-subroutine passb(nac, ido, ip, l1, idl1, cc, c1, c2, ch, ch2, wa)
-   use fftpack_kind, only: rk
-   implicit none(type, external)
-   real(rk) :: c1, c2, cc, ch, ch2, wa, wai, war
-   integer :: i, idij, idj, idl, idl1, idlj, ido, idot, idp, &
-              ik, inc, ip, ipp2, ipph, j, jc, k, l, l1, lc
-   integer :: nac, nt
-   dimension ch(ido, l1, ip), cc(ido, ip, l1), c1(ido, l1, ip), wa(*), &
-      c2(idl1, ip), ch2(idl1, ip)
-   idot = ido/2
-   nt = ip*idl1
-   ipp2 = ip + 2
-   ipph = (ip + 1)/2
-   idp = ip*ido
-   !
-   if (ido < l1) then
-      do concurrent(i=1:ido, j=2:ipph, k=1:l1)
+      subroutine passb(Nac,Ido,Ip,l1,Idl1,Cc,c1,c2,Ch,Ch2,Wa)
+      use fftpack_kind
+      implicit none
+      real(rk) :: c1 , c2 , Cc , Ch , Ch2 , Wa , wai , war
+      integer :: i , idij , idj , idl , Idl1 , idlj , Ido , idot , idp , &
+              ik , inc , Ip , ipp2 , ipph , j , jc , k , l , l1 , lc
+      integer :: Nac , nt
+      dimension Ch(Ido,l1,Ip) , Cc(Ido,Ip,l1) , c1(Ido,l1,Ip) , Wa(*) , &
+                c2(Idl1,Ip) , Ch2(Idl1,Ip)
+      idot = Ido/2
+      nt = Ip*Idl1
+      ipp2 = Ip + 2
+      ipph = (Ip+1)/2
+      idp = Ip*Ido
+!
+      if ( Ido<l1 ) then
+         do j = 2 , ipph
+            jc = ipp2 - j
+            do i = 1 , Ido
+               do k = 1 , l1
+                  Ch(i,k,j) = Cc(i,j,k) + Cc(i,jc,k)
+                  Ch(i,k,jc) = Cc(i,j,k) - Cc(i,jc,k)
+               enddo
+            enddo
+         enddo
+         do i = 1 , Ido
+            do k = 1 , l1
+               Ch(i,k,1) = Cc(i,1,k)
+            enddo
+         enddo
+      else
+         do j = 2 , ipph
+            jc = ipp2 - j
+            do k = 1 , l1
+               do i = 1 , Ido
+                  Ch(i,k,j) = Cc(i,j,k) + Cc(i,jc,k)
+                  Ch(i,k,jc) = Cc(i,j,k) - Cc(i,jc,k)
+               enddo
+            enddo
+         enddo
+         do k = 1 , l1
+            do i = 1 , Ido
+               Ch(i,k,1) = Cc(i,1,k)
+            enddo
+         enddo
+      endif
+      idl = 2 - Ido
+      inc = 0
+      do l = 2 , ipph
+         lc = ipp2 - l
+         idl = idl + Ido
+         do ik = 1 , Idl1
+            c2(ik,l) = Ch2(ik,1) + Wa(idl-1)*Ch2(ik,2)
+            c2(ik,lc) = Wa(idl)*Ch2(ik,Ip)
+         enddo
+         idlj = idl
+         inc = inc + Ido
+         do j = 3 , ipph
+            jc = ipp2 - j
+            idlj = idlj + inc
+            if ( idlj>idp ) idlj = idlj - idp
+            war = Wa(idlj-1)
+            wai = Wa(idlj)
+            do ik = 1 , Idl1
+               c2(ik,l) = c2(ik,l) + war*Ch2(ik,j)
+               c2(ik,lc) = c2(ik,lc) + wai*Ch2(ik,jc)
+            enddo
+         enddo
+      enddo
+      do j = 2 , ipph
+         do ik = 1 , Idl1
+            Ch2(ik,1) = Ch2(ik,1) + Ch2(ik,j)
+         enddo
+      enddo
+      do j = 2 , ipph
          jc = ipp2 - j
-         ch(i, k, j) = cc(i, j, k) + cc(i, jc, k)
-         ch(i, k, jc) = cc(i, j, k) - cc(i, jc, k)
-      end do
-      do concurrent(i=1:ido, k=1:l1)
-         ch(i, k, 1) = cc(i, 1, k)
-      end do
-   else
-      do concurrent(i=1:ido, j=2:ipph, k=1:l1)
-         jc = ipp2 - j
-         ch(i, k, j) = cc(i, j, k) + cc(i, jc, k)
-         ch(i, k, jc) = cc(i, j, k) - cc(i, jc, k)
-      end do
-      do concurrent(i=1:ido, k=1:l1)
-         ch(i, k, 1) = cc(i, 1, k)
-      end do
-   end if
-   idl = 2 - ido
-   inc = 0
-   do l = 2, ipph
-      lc = ipp2 - l
-      idl = idl + ido
-      do concurrent(ik=1:idl1)
-         c2(ik, l) = ch2(ik, 1) + wa(idl - 1)*ch2(ik, 2)
-         c2(ik, lc) = wa(idl)*ch2(ik, ip)
-      end do
-      idlj = idl
-      inc = inc + ido
-      do j = 3, ipph
-         jc = ipp2 - j
-         idlj = idlj + inc
-         if (idlj > idp) idlj = idlj - idp
-         war = wa(idlj - 1)
-         wai = wa(idlj)
-         do concurrent(ik=1:idl1)
-            c2(ik, l) = c2(ik, l) + war*ch2(ik, j)
-            c2(ik, lc) = c2(ik, lc) + wai*ch2(ik, jc)
-         end do
-      end do
-   end do
-   do concurrent(ik=1:idl1, j=2:ipph)
-      ch2(ik, 1) = ch2(ik, 1) + ch2(ik, j)
-   end do
-   do concurrent(ik=2:idl1:2, j=2:ipph)
-      jc = ipp2 - j
-      ch2(ik - 1, j) = c2(ik - 1, j) - c2(ik, jc)
-      ch2(ik - 1, jc) = c2(ik - 1, j) + c2(ik, jc)
-      ch2(ik, j) = c2(ik, j) + c2(ik - 1, jc)
-      ch2(ik, jc) = c2(ik, j) - c2(ik - 1, jc)
-   end do
-   nac = 1
-   if (ido == 2) return
-   nac = 0
-   do concurrent(ik=1:idl1)
-      c2(ik, 1) = ch2(ik, 1)
-   end do
-   do concurrent(j=2:ip, k=1:l1)
-      c1(1, k, j) = ch(1, k, j)
-      c1(2, k, j) = ch(2, k, j)
-   end do
-   if (idot > l1) then
-      idj = 2 - ido
-      do j = 2, ip
-         idj = idj + ido
-         do k = 1, l1
-            idij = idj
-            do i = 4, ido, 2
-               idij = idij + 2
-               c1(i - 1, k, j) = wa(idij - 1)*ch(i - 1, k, j) - wa(idij)*ch(i, k, j)
-               c1(i, k, j) = wa(idij - 1)*ch(i, k, j) + wa(idij)*ch(i - 1, k, j)
-            end do
-         end do
-      end do
-      return
-   end if
-   idij = 0
-   do j = 2, ip
-      idij = idij + 2
-      do i = 4, ido, 2
+         do ik = 2 , Idl1 , 2
+            Ch2(ik-1,j) = c2(ik-1,j) - c2(ik,jc)
+            Ch2(ik-1,jc) = c2(ik-1,j) + c2(ik,jc)
+            Ch2(ik,j) = c2(ik,j) + c2(ik-1,jc)
+            Ch2(ik,jc) = c2(ik,j) - c2(ik-1,jc)
+         enddo
+      enddo
+      Nac = 1
+      if ( Ido==2 ) return
+      Nac = 0
+      do ik = 1 , Idl1
+         c2(ik,1) = Ch2(ik,1)
+      enddo
+      do j = 2 , Ip
+         do k = 1 , l1
+            c1(1,k,j) = Ch(1,k,j)
+            c1(2,k,j) = Ch(2,k,j)
+         enddo
+      enddo
+      if ( idot>l1 ) then
+         idj = 2 - Ido
+         do j = 2 , Ip
+            idj = idj + Ido
+            do k = 1 , l1
+               idij = idj
+               do i = 4 , Ido , 2
+                  idij = idij + 2
+                  c1(i-1,k,j) = Wa(idij-1)*Ch(i-1,k,j) - Wa(idij)       &
+                                *Ch(i,k,j)
+                  c1(i,k,j) = Wa(idij-1)*Ch(i,k,j) + Wa(idij)           &
+                              *Ch(i-1,k,j)
+               enddo
+            enddo
+         enddo
+         return
+      endif
+      idij = 0
+      do j = 2 , Ip
          idij = idij + 2
-         do concurrent(k=1:l1)
-            c1(i - 1, k, j) = wa(idij - 1)*ch(i - 1, k, j) - wa(idij)*ch(i, k, j)
-            c1(i, k, j) = wa(idij - 1)*ch(i, k, j) + wa(idij)*ch(i - 1, k, j)
-         end do
-      end do
-   end do
-   return
-end subroutine passb
+         do i = 4 , Ido , 2
+            idij = idij + 2
+            do k = 1 , l1
+               c1(i-1,k,j) = Wa(idij-1)*Ch(i-1,k,j) - Wa(idij)*Ch(i,k,j)
+               c1(i,k,j) = Wa(idij-1)*Ch(i,k,j) + Wa(idij)*Ch(i-1,k,j)
+            enddo
+         enddo
+      enddo
+      return
+      end subroutine passb
