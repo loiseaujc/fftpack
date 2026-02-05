@@ -1,5 +1,6 @@
       subroutine dzfftf(n, r, azero, a, b, wsave)
-         use fftpack_kinds, only: dp
+!     version 3  june 1979
+         use fftpack_kind, only: dp => rk
          implicit none
          integer, intent(in) :: n
          real(dp), intent(in) :: r(*)
