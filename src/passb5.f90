@@ -1,5 +1,5 @@
       subroutine passb5(ido, l1, cc, ch, wa1, wa2, wa3, wa4)
-         use fftpack_kind, only: dp => rk
+         use fftpack_kinds, only: dp
          implicit none
          integer, intent(in) :: ido, l1
          real(dp), intent(in) :: cc(ido, 5, l1), wa1(*), wa2(*), wa3(*), wa4(*)

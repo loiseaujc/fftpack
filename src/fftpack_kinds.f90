@@ -3,6 +3,8 @@ module fftpack_kinds
    implicit none(type, external)
    private
 
+   public :: sp, dp, xdp, qp, lk
+
    !> Single precision real numbers.
    integer, parameter :: sp = selected_real_kind(6)
 

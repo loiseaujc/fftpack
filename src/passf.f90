@@ -1,5 +1,5 @@
       subroutine passf(nac, ido, ip, l1, idl1, cc, c1, c2, ch, ch2, wa)
-         use fftpack_kind, only: dp => rk
+         use fftpack_kinds, only: dp
          implicit none
          integer, intent(out) :: nac
          integer, intent(in) :: ido, ip, l1, idl1
