@@ -1,5 +1,5 @@
       subroutine radf2(ido, l1, cc, ch, wa1)
-         use fftpack_kinds, only: dp
+         use fftpack_kind, only: dp => rk
          implicit none
          integer, intent(in) :: ido, l1
          real(dp), intent(in) :: cc(ido, l1, 2), wa1(*)

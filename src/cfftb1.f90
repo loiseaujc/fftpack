@@ -1,5 +1,5 @@
       subroutine cfftb1(n, c, ch, wa, ifac)
-         use fftpack_kinds, only: dp
+         use fftpack_kind, only: dp => rk
          implicit none
          integer, intent(in) :: n, ifac(*)
          real(dp), intent(in) :: wa(*)
