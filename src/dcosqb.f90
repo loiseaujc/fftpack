@@ -1,5 +1,5 @@
       subroutine dcosqb(n, x, wsave)
-         use fftpack_kinds, only: dp
+         use fftpack_kind, only: dp => rk
          implicit none
          integer, intent(in) :: n
          real(dp), intent(in) :: wsave(*)

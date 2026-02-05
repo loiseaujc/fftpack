@@ -1,5 +1,5 @@
       subroutine cosqf1(n, x, w, xh)
-         use fftpack_kinds, only: dp
+         use fftpack_kind, only: dp => rk
          implicit none
          integer, intent(in) :: n
          real(dp), intent(inout) :: x(*)

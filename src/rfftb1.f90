@@ -1,6 +1,5 @@
       subroutine rfftb1(n, c, ch, wa, ifac)
-         use fftpack_kinds, only: dp
-         use fftpack_legacy_drivers_rad, only: radbg, radb2, radb3, radb4, radb5
+         use fftpack_kind, only: dp => rk
          implicit none
          integer, intent(in) :: n
          real(dp), intent(inout) :: c(*)
